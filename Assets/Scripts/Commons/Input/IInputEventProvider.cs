@@ -1,14 +1,16 @@
-﻿public interface IInputEventProvider
+﻿using UniRx;
+using UnityEngine;
+
+
+public interface IInputEventProvider
 {
     /// <summary>
     /// 
     /// </summary>
-    /// <returns></returns>
-    public bool InputTapRelease();
-    
+    public IReadOnlyReactiveProperty<Vector3> MoveDirection { get; }
+
     /// <summary>
     /// 
     /// </summary>
-    /// <returns></returns>
-    public bool InputTapPush();
+    public IReadOnlyReactiveProperty<bool> UndoButton { get; }
 }

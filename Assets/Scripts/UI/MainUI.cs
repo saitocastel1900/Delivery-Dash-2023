@@ -1,13 +1,16 @@
+using UI.Main.StageNumber;
 using UnityEngine;
+using Zenject;
 
-public class MainUI : MonoBehaviour
+namespace UI.Main
 {
-    [SerializeField] private MoveCommandPresenter _moveButton;
-    [SerializeField] private StageNumber _stageNumber;
-    
-    private void Start()
+    public class MainUI : MonoBehaviour
     {
-        _moveButton.Initialize();
-        _stageNumber.Initialize();
+        [Inject] private StageNumberPresenter _stageNumber;
+
+        private void Start()
+        {
+
+        }
     }
 }

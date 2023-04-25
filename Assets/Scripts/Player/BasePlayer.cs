@@ -20,7 +20,7 @@ public abstract class BasePlayer : MonoBehaviour
     {
         _moleCore = this.gameObject.GetComponent<PlayerCore>();
         _moleCore.OnInitializeAsync.Subscribe(_=>OnInitialize()).AddTo(this);
-            
+
         OnStart();
     }
 

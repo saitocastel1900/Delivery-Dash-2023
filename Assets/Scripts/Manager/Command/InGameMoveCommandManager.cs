@@ -22,19 +22,21 @@ public class InGameMoveCommandManager : MonoBehaviour
     public void Initialize()
     {
         _player = GameObject.FindGameObjectWithTag(InGameConst.PlayerObjectTag);
-        _input.MoveDirection.Subscribe(TryMovePlayer);
-        _input.UndoButton.ThrottleFirst(TimeSpan.FromSeconds(0.5f)).Subscribe(_ => OnUndo());
+        _input.MoveDirection.Subscribe(OnMove);
+        _input.UndoButton.ThrottleFirst(TimeSpan.FromSeconds(0.1f)).Subscribe(_ => OnUndo());
     }
 
-    private void TryMovePlayer(Vector3 direction)
+    private void OnMove(Vector3 direction)
     {
         bool blockIsMoved = false;
-        _directionList.Push(direction);
+        
         var currentPlayerPos = _stageManager.GetPlayerPos(_player);
         var nextPlayerPos = _stageManager.GetNextPosition(currentPlayerPos, direction);
 
         if (!_stageManager.IsValidPosition(nextPlayerPos)) return;
 
+        _directionList.Push(direction);
+        
         if (_stageManager.IsBlock(nextPlayerPos))
         {
             // ブロックの移動先の位置を計算
@@ -94,6 +96,7 @@ public class InGameMoveCommandManager : MonoBehaviour
         else
         {
             _stageManager.UpdateGameObjectPos(currentPlayerPos);
+            
             ICommand playerCommand = new MoveCommand(_player.GetComponent<PlayerMover>(),direction);
             PlayerMoveCommandInvoker.Execute(playerCommand);
 
@@ -102,11 +105,11 @@ public class InGameMoveCommandManager : MonoBehaviour
             switch (_stageManager.GetTileType(nextPlayerPos.x, nextPlayerPos.z))
             {
                 case TileType.GROUND:
-                    _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.PLAYER);
+                    _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.BLOCK);
                     break;
 
                 case TileType.TARGET:
-                    _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.PLAYER_ON_TARGET);
+                    _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.BLOCK_ON_TARGET);
                     break;
             }
         }
@@ -120,42 +123,71 @@ public class InGameMoveCommandManager : MonoBehaviour
     {
         if (_directionList.Count > 0)
         {
-            //
-            PlayerMoveCommandInvoker.Undo();
-
-            var direction = -_directionList.Pop();
+            var direction = _directionList.Pop();
             //
             var currentPlayerPos = _stageManager.GetPlayerPos(_player);
-            var nextPlayerPos = _stageManager.GetNextPosition(currentPlayerPos, direction);
+            var nextPlayerPos = _stageManager.GetNextPosition(currentPlayerPos, -direction);
             
-            //
-            _stageManager.SetPlayerPos(_player, nextPlayerPos);
-            _stageManager.UpdateGameObjectPos(currentPlayerPos);
-            
-            switch (_stageManager.GetTileType(nextPlayerPos.x, nextPlayerPos.z))
-            {
-                case TileType.GROUND:
-                    _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.PLAYER);
-                    break;
-
-                case TileType.TARGET:
-                    _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.PLAYER_ON_TARGET);
-                    break;
-            }
-
             if (_blockIsMovedList.Count > 0 && _blockIsMovedList.Pop())
             {
-                BlockMoveCommandInvoker.Undo();
-                var nextBlockPos = _stageManager.GetNextPosition(nextPlayerPos, direction);
+                var currentBlockPos = _stageManager.GetNextPosition(currentPlayerPos, direction);
+                
+                _stageManager.UpdateGameObjectPos(currentBlockPos);
+                
                 // 移動するブロックを取得
-                var block = _stageManager.GetGameObjectAtPosition(new Vector3Int(nextPlayerPos.x, 0, nextPlayerPos.z));
-                // ブロックの位置を更新
-                _stageManager.SetBlockPos(block, new Vector3Int(nextBlockPos.x, 0, nextBlockPos.z));
+                var block = _stageManager.GetGameObjectAtPosition(new Vector3Int(currentBlockPos.x, 0, currentBlockPos.z));
+                 
+                BlockMoveCommandInvoker.Undo();
 
-                switch (_stageManager.GetTileType(nextBlockPos.x, nextBlockPos.z))
+                // ブロックの位置を更新
+                _stageManager.SetBlockPos(block, new Vector3Int(currentPlayerPos.x, 0, currentPlayerPos.z));
+
+                switch (_stageManager.GetTileType(currentPlayerPos.x, currentPlayerPos.z))
                 {
                     case TileType.PLAYER:
-                        _stageManager.SetTileType(nextBlockPos.x, nextBlockPos.z, TileType.BLOCK);
+                        _stageManager.SetTileType(currentPlayerPos.x, currentPlayerPos.z, TileType.BLOCK);
+                        break;
+                    
+                    case TileType.TARGET:
+                        _stageManager.SetTileType(currentPlayerPos.x, currentPlayerPos.z, TileType.BLOCK_ON_TARGET);
+                        break;
+                }
+                
+                //
+                _stageManager.UpdateGameObjectPos(nextPlayerPos);
+                //
+                PlayerMoveCommandInvoker.Undo();
+                //
+                _stageManager.SetPlayerPos(_player, nextPlayerPos);
+
+                switch (_stageManager.GetTileType(nextPlayerPos.x, nextPlayerPos.z))
+                {
+                    case TileType.GROUND:
+                        _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.PLAYER);
+                        break;
+
+                    case TileType.TARGET:
+                        _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.PLAYER_ON_TARGET);
+                        break;
+                }
+            }
+            else
+            {
+                //
+                _stageManager.UpdateGameObjectPos(currentPlayerPos);
+                //
+                PlayerMoveCommandInvoker.Undo();
+                //
+                _stageManager.SetPlayerPos(_player, nextPlayerPos);
+
+                switch (_stageManager.GetTileType(nextPlayerPos.x, nextPlayerPos.z))
+                {
+                    case TileType.GROUND:
+                        _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.PLAYER);
+                        break;
+
+                    case TileType.TARGET:
+                        _stageManager.SetTileType(nextPlayerPos.x, nextPlayerPos.z, TileType.PLAYER_ON_TARGET);
                         break;
                 }
             }

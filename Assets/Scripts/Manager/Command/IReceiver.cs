@@ -1,6 +1,13 @@
 using UnityEngine;
 
-public interface IReceiver
+namespace Manager.Command
 {
-    public void Move(Vector3 pos);
+    public interface IReceiver
+    {
+        /// <summary>
+        /// 移動
+        /// </summary>
+        /// <param name="direction">移動方向</param>
+        public void Move(Vector3 direction);
+    }
 }

@@ -1,23 +1,44 @@
 using UnityEngine;
 
-public class MoveCommand : ICommand
+namespace Manager.Command
 {
-    private IReceiver _receiver;
-    private Vector3 _pos;
-
-    public MoveCommand(IReceiver receiver,Vector3 pos)
+    public class MoveCommand : ICommand
     {
-        _receiver = receiver;
-        _pos = pos;
-    }
+        /// <summary>
+        /// 実行される命令
+        /// </summary>
+        private IReceiver _receiver;
+        
+        /// <summary>
+        /// 移動方向
+        /// </summary>
+        private Vector3 _direction;
 
-    public void Execute()
-    {
-        _receiver.Move(_pos);
-    }
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        /// <param name="receiver">実行される命令</param>
+        /// <param name="direction">移動方向</param>
+        public MoveCommand(IReceiver receiver, Vector3 direction)
+        {
+            _receiver = receiver;
+            _direction = direction;
+        }
 
-    public void Undo()
-    {
-        _receiver.Move(-_pos);
+        /// <summary>
+        /// 実行
+        /// </summary>
+        public void Execute()
+        {
+            _receiver.Move(_direction);
+        }
+
+        /// <summary>
+        /// 実行巻き戻し
+        /// </summary>
+        public void Undo()
+        {
+            _receiver.Move(-_direction);
+        }
     }
 }

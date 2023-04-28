@@ -1,4 +1,4 @@
-﻿namespace UI.DebugMessage
+﻿namespace Commons.Damage
 {
     public interface IDamagable
     {

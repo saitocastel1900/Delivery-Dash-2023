@@ -18,6 +18,7 @@ public class StageManager : MonoBehaviour
 
     [SerializeField] private GameObject _parentObject;
     private Vector3 _middleOffset; // 中心位置
+    private int _blockCount;
 
     // 各位置に存在するゲームオブジェクトを管理する連想配列
     private Dictionary<GameObject, Vector3Int> _tileObjectData = new Dictionary<GameObject, Vector3Int>();
@@ -95,6 +96,7 @@ public class StageManager : MonoBehaviour
 
                     case TileType.BLOCK:
                         var block = Instantiate(_blockObject, GetDisplayPos(x, 0, z), Quaternion.identity);
+                        _blockCount++;
                         block.name = InGameConst.BlockName;
                         block.transform.parent = _parentObject.transform;
                         _tileObjectData.Add(block, new Vector3Int(x, 0, z));
@@ -107,7 +109,7 @@ public class StageManager : MonoBehaviour
     /// <summary>
     /// 
     /// </summary>
-    public Vector3 GetDisplayPos(int x, int y, int z)
+    private Vector3 GetDisplayPos(int x, int y, int z)
     {
         return new Vector3
         (
@@ -215,5 +217,34 @@ public class StageManager : MonoBehaviour
     public TileType GetTileType(int x, int z)
     {
         return _tileList[x, z];
+    }
+    
+    // ゲームをクリアしたかどうか確認
+    public bool CheckCompletion()
+    {
+        // 目的地に乗っているブロックの数を計算
+        int blockOnTargetCount = 0;
+
+        for (int z = 0; z < _rowCount; z++)
+        {
+            for (int x = 0; x < _columnCount; x++)
+            {
+                if (_tileList[x, z] == TileType.BLOCK_ON_TARGET)
+                {
+                    blockOnTargetCount++;
+                }
+            }
+        }
+
+        // すべてのブロックが目的地の上に乗っている場合
+        if (blockOnTargetCount == _blockCount)
+        {
+            // ゲームクリア
+            return true;
+        }
+        else
+        {
+            return false;
+        }
     }
 }

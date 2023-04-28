@@ -2,7 +2,7 @@ using System;
 using UniRx;
 using Zenject;
 
-namespace UI.Main.StageNumber
+namespace UI.InGame.StageNumber
 {
     public class StageNumberPresenter : IDisposable, IInitializable
     {

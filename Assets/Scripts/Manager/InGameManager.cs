@@ -1,5 +1,6 @@
 using Manager.Command;
 using Manager.State;
+using UI.InGame;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -25,9 +26,9 @@ namespace Manager
         [SerializeField] private StageManager _stageManager;
 
         /// <summary>
-        /// UI
+        /// InGameUIController
         /// </summary>
-        [SerializeField] private MainUIController _uiController;
+        [SerializeField] private InGameUIController _uiController;
 
         private void Start()
         {

@@ -1,4 +1,5 @@
 ﻿using Manager.Command;
+using UI.InGame;
 
 namespace Manager.State
 {
@@ -31,7 +32,7 @@ namespace Manager.State
         /// <param name="stage"></param>
         /// <param name="ui"></param>
         /// <param name="inGame"></param>
-        public InGameStateMachine(InGameMoveCommandManager command, StageManager stage, MainUIController ui,
+        public InGameStateMachine(InGameMoveCommandManager command, StageManager stage, InGameUIController ui,
             InGameManager inGame)
         {
             InitializingState = new InitializingState(command, stage, ui, inGame);

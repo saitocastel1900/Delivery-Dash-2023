@@ -33,7 +33,7 @@ namespace Commons.Input
 
         public override void InstallBindings()
         {
-#if UNITY_EDITOR
+#if UNITY_EDITOR || UNITY_WEBGL
             Container.Bind(typeof(IInputEventProvider), typeof(IInitializable)).To<KeyInputProvider>()
                 .AsCached();
 #elif UNITY_ANDROID

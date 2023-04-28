@@ -12,8 +12,8 @@ namespace Commons.Enum
         {
             None = 0,
             Initialize = 1,
-            Play = 1 << 1,
-            Result = 1 << 2,
+            Result = 1 << 1,
+            Finished = 1 << 2,
         }
     }
 }

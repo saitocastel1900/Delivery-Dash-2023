@@ -73,9 +73,3 @@ crashlytics-build.properties
 
 # original
 .idea/
-Assets/ExternalAssets.meta
-Assets/ExternalAssets/*
-Assets/Resources.meta
-Assets/Resources/*
-Assets/Plugins/*
-Assets/Plugins.meta

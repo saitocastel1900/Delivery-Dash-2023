@@ -1,9 +1,17 @@
-﻿using UnityEngine;
+﻿using Manager.Command;
+using UnityEngine;
 
-public class BlockMover : MonoBehaviour,IReceiver
+namespace Block
 {
-    public void Move(Vector3 pos)
+    public class BlockMover : MonoBehaviour, IReceiver
     {
-        transform.position += pos;
+        /// <summary>
+        /// 移動
+        /// </summary>
+        /// <param name="direction">移動方向</param>
+        public void Move(Vector3 direction)
+        {
+            transform.position += direction;
+        }
     }
 }

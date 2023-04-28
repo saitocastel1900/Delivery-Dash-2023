@@ -1,8 +1,15 @@
-
-
-public interface ICommand
+namespace Manager.Command
 {
-    public void Execute();
+    public interface ICommand
+    {
+        /// <summary>
+        /// 実行
+        /// </summary>
+        public void Execute();
 
-    public void Undo();
+        /// <summary>
+        /// 実行巻き戻し
+        /// </summary>
+        public void Undo();
+    }
 }

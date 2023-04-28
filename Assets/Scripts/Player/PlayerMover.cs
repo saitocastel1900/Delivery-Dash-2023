@@ -1,18 +1,33 @@
+using Manager.Command;
 using UniRx;
 using UnityEngine;
 
-public class PlayerMover : BasePlayer , IReceiver
+namespace Player
 {
-    protected override void OnInitialize()
+    public class PlayerMover : BasePlayer, IReceiver
     {
-       
-    }
+        /// <summary>
+        /// 
+        /// </summary>
+        public IReadOnlyReactiveProperty<bool> IsMoving => _isMoving;
 
-    /// <summary>
-    /// 
-    /// </summary>
-    public void Move(Vector3 pos)
-    {
-        transform.position += pos;
+        BoolReactiveProperty _isMoving = new BoolReactiveProperty();
+
+        /// <summary>
+        /// 
+        /// </summary>
+        protected override void OnInitialize()
+        {
+            _input.MoveDirection.Subscribe();
+        }
+
+        /// <summary>
+        /// 移動
+        /// </summary>
+        /// <param name="direction">移動方向</param>
+        public void Move(Vector3 direction)
+        {
+            transform.position += direction;
+        }
     }
 }

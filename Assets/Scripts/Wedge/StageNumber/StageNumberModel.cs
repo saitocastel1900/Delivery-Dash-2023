@@ -1,6 +1,6 @@
 using UniRx;
 
-namespace UI.InGame.StageNumber
+namespace Wedge.InGame.StageNumber
 {
     public class StageNumberModel : IStageNumberModel
     {

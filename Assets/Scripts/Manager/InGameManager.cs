@@ -1,7 +1,7 @@
 using Manager.Command;
 using Manager.Stage;
 using Manager.State;
-using UI.InGame;
+using Wedge.InGame;
 using UniRx;
 using UniRx.Triggers;
 using UnityEngine;
@@ -31,7 +31,7 @@ namespace Manager
         /// <summary>
         /// InGameUIController
         /// </summary>
-        [SerializeField] private InGameUIController _uiController;
+        [SerializeField] private InGameHUDWedgeController _uiController;
 
         /// <summary>
         /// IInputEventProvider

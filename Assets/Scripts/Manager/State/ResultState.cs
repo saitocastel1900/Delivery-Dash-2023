@@ -1,4 +1,4 @@
-﻿using UI.InGame;
+﻿using Wedge.InGame;
 using UnityEngine;
 
 namespace Manager.State
@@ -13,14 +13,14 @@ namespace Manager.State
         /// <summary>
         /// InGameUIController
         /// </summary>
-        readonly InGameUIController _ui;
+        readonly InGameHUDWedgeController _ui;
 
         /// <summary>
         /// コンストラクタ
         /// </summary>
         /// <param name="ui">UI管理クラス</param>
         /// <param name="inGame">ステート管理クラス</param>
-        public ResultState(InGameUIController ui, InGameManager inGame)
+        public ResultState(InGameHUDWedgeController ui, InGameManager inGame)
         {
             _ui = ui;
             _inGame = inGame;

@@ -1,6 +1,6 @@
 using Zenject;
 
-namespace UI.InGame.StageNumber
+namespace Wedge.InGame.StageNumber
 {
     public class StageNumberInstaller : MonoInstaller
     {

@@ -1,9 +1,8 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-namespace UI.InGame
+namespace Wedge.InGame
 {
-    public class InGameUIController : MonoBehaviour
+    public class InGameHUDWedgeController : MonoBehaviour
     {
         /// <summary>
         /// OperationButtons

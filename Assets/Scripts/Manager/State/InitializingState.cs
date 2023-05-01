@@ -1,4 +1,5 @@
 ﻿using Manager.Command;
+using Manager.Stage;
 using UI.InGame;
 using UnityEngine;
 
@@ -14,12 +15,12 @@ namespace Manager.State
         /// <summary>
         /// InGameMoveCommandManager
         /// </summary>
-        readonly InGameMoveCommandManager _command;
+        readonly InGameCommandManager _command;
 
         /// <summary>
         /// StageManager
         /// </summary>
-        readonly StageManager _stage;
+        readonly StageGenerator _stage;
 
         /// <summary>
         /// InGameUIController
@@ -33,7 +34,7 @@ namespace Manager.State
         /// <param name="stage">ステージを管理するクラス</param>
         /// <param name="ui">UI管理クラス</param>
         /// <param name="inGame">ステート管理クラス</param>
-        public InitializingState(InGameMoveCommandManager command, StageManager stage, InGameUIController ui,
+        public InitializingState(InGameCommandManager command, StageGenerator stage, InGameUIController ui,
             InGameManager inGame)
         {
             _command = command;

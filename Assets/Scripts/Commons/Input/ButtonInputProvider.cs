@@ -32,19 +32,21 @@ namespace Commons.Input
         /// Undoボタン
         /// </summary>
         private Button _undoButton;
-
+        
         /// <summary>
-        /// コンストラクタ
+        /// Resetボタン
         /// </summary>
-        public ButtonInputProvider(Button aheadButton, Button leftButton, Button rightButton, Button backButton,
-            Button undoButton)
-        {
-            _aheadButton = aheadButton;
-            _leftButton = leftButton;
-            _rightButton = rightButton;
-            _backButton = backButton;
-            _undoButton = undoButton;
-        }
+        private Button _resetButton;
+        
+        /// <summary>
+        /// Quitボタン
+        /// </summary>
+        private Button _quitButton;
+        
+        /// <summary>
+        /// Spaceボタン
+        /// </summary>
+        private Button _spaceButton;
 
         /// <summary>
         /// 進行方向
@@ -53,10 +55,44 @@ namespace Commons.Input
         private ReactiveProperty<Vector3> _moveDirection = new ReactiveProperty<Vector3>();
 
         /// <summary>
-        /// Undoボタンが押されたか
+        /// Undoが押されたか
         /// </summary>
-        public IReadOnlyReactiveProperty<bool> UndoButton => _undo;
-        private ReactiveProperty<bool> _undo = new ReactiveProperty<bool>();
+        public IReadOnlyReactiveProperty<bool> IsUndo => _isUndo;
+        private ReactiveProperty<bool> _isUndo = new ReactiveProperty<bool>();
+        
+        /// <summary>
+        /// Resetが押されたか
+        /// </summary>
+        public IReadOnlyReactiveProperty<bool> IsReset => _isReset;
+        private ReactiveProperty<bool> _isReset = new ReactiveProperty<bool>(false);
+        
+        /// <summary>
+        /// Quitが押されたか
+        /// </summary>
+        public IReadOnlyReactiveProperty<bool> IsQuit => _isQuit;
+        private ReactiveProperty<bool> _isQuit = new ReactiveProperty<bool>(false);
+        
+        /// <summary>
+        /// Skipが押されたか
+        /// </summary>
+        public IReadOnlyReactiveProperty<bool> IsSkip => _isSkip;
+        private ReactiveProperty<bool> _isSkip = new ReactiveProperty<bool>(false);
+        
+        /// <summary>
+        /// コンストラクタ
+        /// </summary>
+        public ButtonInputProvider(Button aheadButton, Button leftButton, Button rightButton, Button backButton,
+            Button undoButton,Button resetButton,Button quitButton,Button spaceButton)
+        {
+            _aheadButton = aheadButton;
+            _leftButton = leftButton;
+            _rightButton = rightButton;
+            _backButton = backButton;
+            _undoButton = undoButton;
+            _resetButton = resetButton;
+            _quitButton = quitButton;
+            _spaceButton = spaceButton;
+        }
 
         /// <summary>
         /// 初期化
@@ -78,7 +114,31 @@ namespace Commons.Input
                     _undoButton.OnPointerUpAsObservable().Select(_ => false)
                 )
                 .DistinctUntilChanged()
-                .Subscribe(value => _undo.Value = value);
+                .Subscribe(value => _isUndo.Value = value);
+            
+            //キーが押されたら、フラグを設定する
+            Observable.Merge(
+                    _resetButton.OnPointerDownAsObservable().Select(_ => true),
+                    _resetButton.OnPointerUpAsObservable().Select(_ => false)
+                )
+                .DistinctUntilChanged()
+                .Subscribe(value => _isReset.Value = value);
+            
+            //キーが押されたら、フラグを設定する
+            Observable.Merge(
+                    _quitButton.OnPointerDownAsObservable().Select(_ => true),
+                    _quitButton.OnPointerUpAsObservable().Select(_ => false)
+                )
+                .DistinctUntilChanged()
+                .Subscribe(value => _isQuit.Value = value);
+            
+            //キーが押されたら、フラグを設定する
+            Observable.Merge(
+                    _spaceButton.OnPointerDownAsObservable().Select(_ => true),
+                    _spaceButton.OnPointerUpAsObservable().Select(_ => false)
+                )
+                .DistinctUntilChanged()
+                .Subscribe(value => _isQuit.Value = value);
         }
     }
 }

@@ -13,10 +13,28 @@ namespace Commons.Input
         private ReactiveProperty<Vector3> _moveDirection = new ReactiveProperty<Vector3>();
 
         /// <summary>
-        /// Undoボタンが押されたか
+        /// Undoが押されたか
         /// </summary>
-        public IReadOnlyReactiveProperty<bool> UndoButton => _undo;
-        private ReactiveProperty<bool> _undo = new ReactiveProperty<bool>(false);
+        public IReadOnlyReactiveProperty<bool> IsUndo => _isUndo;
+        private ReactiveProperty<bool> _isUndo = new ReactiveProperty<bool>(false);
+        
+        /// <summary>
+        /// Resetが押されたか
+        /// </summary>
+        public IReadOnlyReactiveProperty<bool> IsReset => _isReset;
+        private ReactiveProperty<bool> _isReset = new ReactiveProperty<bool>(false);
+        
+        /// <summary>
+        /// Quitが押されたか
+        /// </summary>
+        public IReadOnlyReactiveProperty<bool> IsQuit => _isQuit;
+        private ReactiveProperty<bool> _isQuit = new ReactiveProperty<bool>(false);
+
+        /// <summary>
+        /// Skipが押されたか
+        /// </summary>
+        public IReadOnlyReactiveProperty<bool> IsSkip => _isSkip;
+        private ReactiveProperty<bool> _isSkip = new ReactiveProperty<bool>(false);
 
         /// <summary>
         /// 初期化
@@ -38,11 +56,29 @@ namespace Commons.Input
 
             //キーが押されたら、フラグを設定する
             Observable.Merge(
-                    Observable.EveryUpdate().Where(_ => UnityEngine.Input.GetKeyDown(KeyCode.Space)).Select(_ => true),
-                    Observable.EveryUpdate().Where(_ => UnityEngine.Input.GetKeyUp(KeyCode.Space)).Select(_ => false)
+                    Observable.EveryUpdate().Where(_ => UnityEngine.Input.GetKeyDown(KeyCode.Z)).Select(_ => true),
+                    Observable.EveryUpdate().Where(_ => UnityEngine.Input.GetKeyUp(KeyCode.Z)).Select(_ => false)
                 )
                 .DistinctUntilChanged()
-                .Subscribe(value => _undo.Value = value);
+                .Subscribe(value => _isUndo.Value = value);
+
+            //キーが押されたら、フラグを設定する
+            Observable.EveryUpdate()
+                .Select(_=>UnityEngine.Input.GetKeyDown(KeyCode.R))
+                .DistinctUntilChanged()
+                .Subscribe(value => _isReset.Value = value);
+            
+            //キーが押されたら、フラグを設定する
+            Observable.EveryUpdate()
+                .Select(_=>UnityEngine.Input.GetKeyDown(KeyCode.Q))
+                .DistinctUntilChanged()
+                .Subscribe(value => _isQuit.Value = value);
+            
+            //キーが押されたら、フラグを設定する
+            Observable.EveryUpdate()
+                .Select(_=>UnityEngine.Input.GetKeyDown(KeyCode.Space))
+                .DistinctUntilChanged()
+                .Subscribe(value => _isSkip.Value = value);
         }
     }
 }

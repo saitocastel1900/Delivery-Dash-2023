@@ -10,7 +10,22 @@ public interface IInputEventProvider
     public IReadOnlyReactiveProperty<Vector3> MoveDirection { get; }
 
     /// <summary>
-    /// Undoボタンが押されたか
+    /// Undoが押されたか
     /// </summary>
-    public IReadOnlyReactiveProperty<bool> UndoButton { get; }
+    public IReadOnlyReactiveProperty<bool> IsUndo { get; }
+    
+    /// <summary>
+    /// Resetが押されたか
+    /// </summary>
+    public IReadOnlyReactiveProperty<bool> IsReset { get; }
+    
+    /// <summary>
+    /// Quitが押されたか
+    /// </summary>
+    public IReadOnlyReactiveProperty<bool> IsQuit { get; }
+    
+    /// <summary>
+    /// Skipが押されたか
+    /// </summary>
+    public IReadOnlyReactiveProperty<bool> IsSkip { get; }
 }

@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Manager.State
 {
@@ -32,7 +33,8 @@ namespace Manager.State
         public void Update()
         {
             Debug.Log("FinishedState Update");
-            _inGame.CurrentState.TransitionTo(_inGame.CurrentState.InitializingState);
+            SceneManager.LoadScene (SceneManager.GetActiveScene().name);
+            //_inGame.CurrentState.TransitionTo(_inGame.CurrentState.InitializingState);
         }
 
         /// <summary>

@@ -5,22 +5,23 @@ using Zenject;
 using UniRx;
 using System;
 using Block;
+using Manager.Stage;
 using Player;
 
 namespace Manager.Command
 {
-    public class InGameMoveCommandManager : MonoBehaviour
+    public class InGameCommandManager : MonoBehaviour
     {
         /// <summary>
         /// 配達したか
         /// </summary>
         public IReactiveProperty<bool> IsDelivered => _isDelivered;
-        private BoolReactiveProperty _isDelivered = new BoolReactiveProperty(false);
+        private readonly BoolReactiveProperty _isDelivered = new BoolReactiveProperty(false);
 
         /// <summary>
         /// StageManager
         /// </summary>
-        [SerializeField] private StageManager _stageManager;
+        [SerializeField] private StageGenerator _stageManager;
 
         /// <summary>
         /// 入力
@@ -30,12 +31,12 @@ namespace Manager.Command
         /// <summary>
         /// 進行方向のリスト
         /// </summary>
-        private Stack<Vector3> _directionList = new Stack<Vector3>();
+        private readonly Stack<Vector3> _directionList = new Stack<Vector3>();
 
         /// <summary>
         /// ブロックが移動したか
         /// </summary>
-        private Stack<bool> _blockIsMovedList = new Stack<bool>();
+        private readonly Stack<bool> _blockIsMovedList = new Stack<bool>();
 
         /// <summary>
         /// Playerのキャッシュ
@@ -48,8 +49,9 @@ namespace Manager.Command
         public void Initialize()
         {
             _player = GameObject.FindGameObjectWithTag(InGameConst.PlayerObjectTag);
-            _input.MoveDirection.Subscribe(OnMove);
-            _input.UndoButton.Where(value => value == true).ThrottleFirst(TimeSpan.FromSeconds(0.1f))
+            
+            _input.MoveDirection.SkipLatestValueOnSubscribe().Subscribe(OnMove);
+            _input.IsUndo.Where(value => value == true).ThrottleFirst(TimeSpan.FromSeconds(0.1f))
                 .Subscribe(_ => OnUndo());
         }
 
@@ -57,40 +59,39 @@ namespace Manager.Command
         /// 移動
         /// </summary>
         /// <param name="direction"></param>
-        private void OnMove(Vector3 direction)
+        public void OnMove(Vector3 direction)
         {
             bool blockIsMoved = false;
-
-            var currentPlayerPos = _stageManager.GetPlayerPos(_player);
+            
+            var currentPlayerPos = _stageManager.GetObjectPosition(_player);
             var nextPlayerPos = _stageManager.GetNextPosition(currentPlayerPos, direction);
 
             //進行方向がステージ内なら移動する
             if (!_stageManager.IsValidPosition(nextPlayerPos)) return;
-
             _directionList.Push(direction);
 
             //進行方向にブロックが存在していたら、、、
-            if (_stageManager.IsBlock(nextPlayerPos))
+            if (_stageManager.IsBlockPosition(nextPlayerPos))
             {
                 // ブロックの移動先の位置を計算
                 var nextBlockPos = _stageManager.GetNextPosition(nextPlayerPos, direction);
 
                 // ブロックの移動先がステージ内の場合かつブロックの移動先にブロックが存在しない場合
-                if (_stageManager.IsValidPosition(nextBlockPos) && !_stageManager.IsBlock(nextBlockPos))
+                if (_stageManager.IsValidPosition(nextBlockPos) && !_stageManager.IsBlockPosition(nextBlockPos))
                 {
                     // 移動するブロックを取得
-                    var block = _stageManager.GetGameObjectAtPosition(new Vector3Int(nextPlayerPos.x, 0,
+                    var block = _stageManager.GetAtPositionObject(new Vector3Int(nextPlayerPos.x, 0,
                         nextPlayerPos.z));
 
                     // プレイヤーの移動先のタイルの情報を更新
-                    _stageManager.UpdateGameObjectPos(nextPlayerPos);
+                    _stageManager.UpdateObjectPosition(nextPlayerPos);
 
                     // ブロックを移動
                     ICommand blockCommand = new MoveCommand(block.GetComponent<BlockMover>(), direction);
                     BlockMoveCommandInvoker.Execute(blockCommand);
 
                     // ブロックの位置を更新
-                    _stageManager.SetBlockPos(block, new Vector3Int(nextBlockPos.x, 0, nextBlockPos.z));
+                    _stageManager.SetObjectPosition(block, new Vector3Int(nextBlockPos.x, 0, nextBlockPos.z));
 
                     // ブロックの移動先の番号を更新
                     switch (_stageManager.GetTileType(nextBlockPos.x, nextBlockPos.z))
@@ -105,15 +106,16 @@ namespace Manager.Command
                     }
 
                     // プレイヤーの現在地のタイルの情報を更新
-                    _stageManager.UpdateGameObjectPos(currentPlayerPos);
+                    _stageManager.UpdateObjectPosition(currentPlayerPos);
 
                     // プレイヤーを移動
                     ICommand playerCommand = new MoveCommand(_player.GetComponent<PlayerMover>(), direction);
                     PlayerMoveCommandInvoker.Execute(playerCommand);
 
                     // プレイヤーの位置を更新
-                    _stageManager.SetPlayerPos(_player, nextPlayerPos);
+                    _stageManager.SetObjectPosition(_player, nextPlayerPos);
 
+                    //タイルを上書き
                     switch (_stageManager.GetTileType(nextPlayerPos.x, nextPlayerPos.z))
                     {
                         case TileType.GROUND:
@@ -130,13 +132,17 @@ namespace Manager.Command
             }
             else
             {
-                _stageManager.UpdateGameObjectPos(currentPlayerPos);
+                // プレイヤーの現在地のタイルの情報を更新
+                _stageManager.UpdateObjectPosition(currentPlayerPos);
 
+                // プレイヤーを移動
                 ICommand playerCommand = new MoveCommand(_player.GetComponent<PlayerMover>(), direction);
                 PlayerMoveCommandInvoker.Execute(playerCommand);
 
-                _stageManager.SetPlayerPos(_player, nextPlayerPos);
+                // プレイヤーの位置を更新
+                _stageManager.SetObjectPosition(_player, nextPlayerPos);
 
+                //タイルを上書き
                 switch (_stageManager.GetTileType(nextPlayerPos.x, nextPlayerPos.z))
                 {
                     case TileType.GROUND:
@@ -149,7 +155,7 @@ namespace Manager.Command
                 }
             }
 
-            _isDelivered.Value = _stageManager.CheckCompletion();
+            _isDelivered.Value = _stageManager.IsDelivered();
             _blockIsMovedList.Push(blockIsMoved);
         }
 
@@ -163,7 +169,7 @@ namespace Manager.Command
             {
                 var direction = _directionList.Pop();
                 
-                var currentPlayerPos = _stageManager.GetPlayerPos(_player);
+                var currentPlayerPos = _stageManager.GetObjectPosition(_player);
                 var nextPlayerPos = _stageManager.GetNextPosition(currentPlayerPos, -direction);
 
                 //ブロックが動かされていたら、ブロックも移動を巻き戻す
@@ -171,17 +177,20 @@ namespace Manager.Command
                 {
                     var currentBlockPos = _stageManager.GetNextPosition(currentPlayerPos, direction);
 
-                    _stageManager.UpdateGameObjectPos(currentBlockPos);
+                    // ブロックの移動先のタイルの情報を更新
+                    _stageManager.UpdateObjectPosition(currentBlockPos);
 
                     // 移動するブロックを取得
-                    var block = _stageManager.GetGameObjectAtPosition(new Vector3Int(currentBlockPos.x, 0,
+                    var block = _stageManager.GetAtPositionObject(new Vector3Int(currentBlockPos.x, 0,
                         currentBlockPos.z));
 
+                    //　ブロックを移動
                     BlockMoveCommandInvoker.Undo();
 
                     // ブロックの位置を更新
-                    _stageManager.SetBlockPos(block, new Vector3Int(currentPlayerPos.x, 0, currentPlayerPos.z));
+                    _stageManager.SetObjectPosition(block, new Vector3Int(currentPlayerPos.x, 0, currentPlayerPos.z));
 
+                    //タイルを上書き
                     switch (_stageManager.GetTileType(currentPlayerPos.x, currentPlayerPos.z))
                     {
                         case TileType.PLAYER:
@@ -193,12 +202,16 @@ namespace Manager.Command
                             break;
                     }
                     
-                    _stageManager.UpdateGameObjectPos(nextPlayerPos);
+                    // プレイヤーの現在地のタイルの情報を更新
+                    _stageManager.UpdateObjectPosition(nextPlayerPos);
                     
+                    // プレイヤーを移動
                     PlayerMoveCommandInvoker.Undo();
                     
-                    _stageManager.SetPlayerPos(_player, nextPlayerPos);
+                    // プレイヤーの位置を更新
+                    _stageManager.SetObjectPosition(_player, nextPlayerPos);
 
+                    //タイルを上書き
                     switch (_stageManager.GetTileType(nextPlayerPos.x, nextPlayerPos.z))
                     {
                         case TileType.GROUND:
@@ -212,12 +225,16 @@ namespace Manager.Command
                 }
                 else
                 {
-                    _stageManager.UpdateGameObjectPos(currentPlayerPos);
+                    // プレイヤーの現在地のタイルの情報を更新
+                    _stageManager.UpdateObjectPosition(currentPlayerPos);
                     
+                    // プレイヤーを移動
                     PlayerMoveCommandInvoker.Undo();
                     
-                    _stageManager.SetPlayerPos(_player, nextPlayerPos);
+                    // プレイヤーの位置を更新
+                    _stageManager.SetObjectPosition(_player, nextPlayerPos);
 
+                    //タイルを上書き
                     switch (_stageManager.GetTileType(nextPlayerPos.x, nextPlayerPos.z))
                     {
                         case TileType.GROUND:

@@ -30,7 +30,22 @@ namespace Commons.Input
         /// Undoボタン
         /// </summary>
         [SerializeField] private Button _undoButton;
+        
+        /// <summary>
+        /// Resetボタン
+        /// </summary>
+        [SerializeField] private Button _resetButton;
+        
+        /// <summary>
+        /// Quitボタン
+        /// </summary>
+        [SerializeField] private Button _quitButton;
 
+        /// <summary>
+        /// Spaceボタン
+        /// </summary>
+        private Button _spaceButton;
+        
         public override void InstallBindings()
         {
 #if UNITY_EDITOR || UNITY_WEBGL
@@ -38,7 +53,7 @@ namespace Commons.Input
                 .AsCached();
 #elif UNITY_ANDROID
         Container.Bind(typeof(IInputEventProvider),typeof(IInitializable)).To<ButtonInputProvider>()
-            .AsCached().WithArguments(_aheadButton,_leftButton,_rightButton,_backButton,_undoButton);
+            .AsCached().WithArguments(_aheadButton,_leftButton,_rightButton,_backButton,_undoButton,_resetButton,_quitButton,_spaceButton);
 #endif
         }
     }

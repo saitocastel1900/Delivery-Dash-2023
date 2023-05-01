@@ -1,11 +1,40 @@
-﻿public enum TileType
+﻿namespace Manager.Stage
 {
-    NONE, // 何も無い
-    GROUND, // 地面
-    TARGET, // 目的地
-    PLAYER, // プレイヤー
-    BLOCK, // ブロック
+    public enum TileType
+    {
+        /// <summary>
+        /// 何も無い
+        /// </summary>
+        NONE,
+        
+        /// <summary>
+        /// 地面
+        /// </summary>
+        GROUND, 
+        
+        /// <summary>
+        /// 目的地
+        /// </summary>
+        TARGET, 
+        
+        /// <summary>
+        /// プレイヤー
+        /// </summary>
+        PLAYER,
 
-    PLAYER_ON_TARGET, // プレイヤー（目的地の上）
-    BLOCK_ON_TARGET, // ブロック（目的地の上）
+        /// <summary>
+        /// ブロック
+        /// </summary>
+        BLOCK, 
+
+        /// <summary>
+        /// プレイヤー（目的地の上）
+        /// </summary>
+        PLAYER_ON_TARGET, 
+    
+        /// <summary>
+        /// ブロック（目的地の上）
+        /// </summary>
+        BLOCK_ON_TARGET, 
+    }
 }

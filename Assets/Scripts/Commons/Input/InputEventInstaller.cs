@@ -42,9 +42,9 @@ namespace Commons.Input
         [SerializeField] private Button _quitButton;
 
         /// <summary>
-        /// Spaceボタン
+        /// Skipボタン
         /// </summary>
-        private Button _spaceButton;
+        [SerializeField] private Button _skipButton;
         
         public override void InstallBindings()
         {

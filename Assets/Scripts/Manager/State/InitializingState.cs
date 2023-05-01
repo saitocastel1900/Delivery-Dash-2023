@@ -1,6 +1,6 @@
 ﻿using Manager.Command;
 using Manager.Stage;
-using UI.InGame;
+using Wedge.InGame;
 using UnityEngine;
 
 namespace Manager.State
@@ -25,7 +25,7 @@ namespace Manager.State
         /// <summary>
         /// InGameUIController
         /// </summary>
-        readonly InGameUIController _ui;
+        readonly InGameHUDWedgeController _ui;
 
         /// <summary>
         /// コンストラクタ
@@ -34,7 +34,7 @@ namespace Manager.State
         /// <param name="stage">ステージを管理するクラス</param>
         /// <param name="ui">UI管理クラス</param>
         /// <param name="inGame">ステート管理クラス</param>
-        public InitializingState(InGameCommandManager command, StageGenerator stage, InGameUIController ui,
+        public InitializingState(InGameCommandManager command, StageGenerator stage, InGameHUDWedgeController ui,
             InGameManager inGame)
         {
             _command = command;

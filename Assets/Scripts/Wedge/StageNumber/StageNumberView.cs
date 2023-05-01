@@ -1,7 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace UI.InGame.StageNumber
+namespace Wedge.InGame.StageNumber
 {
     public class StageNumberView : MonoBehaviour
     {

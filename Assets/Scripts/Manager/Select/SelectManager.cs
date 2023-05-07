@@ -13,12 +13,12 @@ namespace Manager.Select
         /// StageSelectWidgetController
         /// </summary>
         [SerializeField] private StageSelectWidgetController _selectWidget;
-        
+
         /// <summary>
         /// ISelectInputEventProvider
         /// </summary>
         [Inject] private ISelectInputEventProvider _input;
-        
+
         /// <summary>
         /// AudioManager
         /// </summary>
@@ -26,16 +26,10 @@ namespace Manager.Select
 
         private void Start()
         {
-            _input.IsLeft.SkipLatestValueOnSubscribe().Where(value => value == true).Subscribe(_ =>
-            {
-                _audioManager.PlaySoundEffect(SoundEffect.Select2);
-                _selectWidget.TurnLeft();
-            });
-            _input.IsRight.SkipLatestValueOnSubscribe().Where(value => value == true).Subscribe(_ =>
-            {
-                _audioManager.PlaySoundEffect(SoundEffect.Select2);
-                _selectWidget.TurnRight();
-            });
+            _input.IsLeft.SkipLatestValueOnSubscribe().Where(value => value == true)
+                .Subscribe(_ => _selectWidget.TurnLeft());
+            _input.IsRight.SkipLatestValueOnSubscribe().Where(value => value == true)
+                .Subscribe(_ => _selectWidget.TurnRight());
             _input.IsTransition.SkipLatestValueOnSubscribe().Subscribe(_ => _selectWidget.SceneTransition());
         }
     }

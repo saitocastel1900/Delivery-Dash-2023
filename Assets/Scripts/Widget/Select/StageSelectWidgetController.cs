@@ -3,10 +3,8 @@ using System.Linq;
 using Commons.Audio;
 using Commons.Const;
 using Commons.Extensions;
-using Commons.Input;
 using Commons.Save;
 using DG.Tweening;
-using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Zenject;
@@ -84,7 +82,7 @@ namespace Widget.Select
             }
             else
             {
-                _audioManager.PlaySoundEffect(SoundEffect.SelectEnter1);
+                _audioManager.PlaySoundEffect(SoundEffect.SelectEnter2);
             }
         }
 
@@ -123,6 +121,8 @@ namespace Widget.Select
                 seq.AppendCallback(SetStageSelectPanelListScale).SetLink(this.gameObject);
                 _tween = seq;
             }
+            
+            _audioManager.PlaySoundEffect(SoundEffect.Select1);
         }
 
         /// <summary>
@@ -148,6 +148,8 @@ namespace Widget.Select
                 seq.AppendCallback(SetStageSelectPanelListScale).SetLink(this.gameObject);
                 _tween = seq;
             }
+            
+            _audioManager.PlaySoundEffect(SoundEffect.Select1);
         }
     }
 }

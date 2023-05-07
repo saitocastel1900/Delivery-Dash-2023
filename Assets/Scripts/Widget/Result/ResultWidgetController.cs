@@ -45,7 +45,6 @@ namespace Widget.Result
         /// <summary>
         /// リザルトアニメーション
         /// </summary>
-        /// ここの名前は変えるべき
         public void Animation()
         {
             DOTween.Sequence()

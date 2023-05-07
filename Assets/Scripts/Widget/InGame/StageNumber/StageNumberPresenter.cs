@@ -48,6 +48,15 @@ namespace Widget.InGame.StageNumber
                 .Subscribe(_view.SetText)
                 .AddTo(_compositeDisposable);
         }
+        
+        /// <summary>
+        /// ステージ番号を設定
+        /// </summary>
+        /// <param name="number">番号</param>
+        public void SetStageNumber(int number)
+        {
+            _model.SetStageNumber(number);
+        }
 
         /// <summary>
         /// Dispose

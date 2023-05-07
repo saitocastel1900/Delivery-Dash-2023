@@ -45,6 +45,7 @@ namespace Manager.InGame.State
             DebugUtility.Log("FinishedState Update");
 
             _saveManager.Load();
+            
             if (_saveManager.Data.CurrentStageNumber + 1 < Const.StagesNumber)
             {
                 _saveManager.Data.CurrentStageNumber++;

@@ -21,11 +21,6 @@ namespace Widget.Select
         [SerializeField] List<RectTransform> _stageSelectPanelList;
 
         /// <summary>
-        /// ISelectInputEventProvider
-        /// </summary>
-        [Inject] private ISelectInputEventProvider _input;
-        
-        /// <summary>
         /// AudioManager
         /// </summary>
         [Inject] private AudioManager _audioManager;
@@ -51,17 +46,6 @@ namespace Widget.Select
             SetInteractable(_saveManager.Data.MaxStageClearNumber);
 
             this.SetStageSelectPanelListScale();
-
-            _input.IsLeft.SkipLatestValueOnSubscribe().Where(value => value == true).Subscribe(_ =>
-            {
-                _audioManager.PlaySoundEffect(SoundEffect.Select2);
-                TurnLeft();
-            });
-            _input.IsRight.SkipLatestValueOnSubscribe().Where(value => value == true).Subscribe(_ =>
-            {
-                _audioManager.PlaySoundEffect(SoundEffect.Select2);
-                TurnRight();
-            });
         }
 
         /// <summary>
@@ -94,6 +78,7 @@ namespace Widget.Select
             if (_saveManager.Data.MaxStageClearNumber >= _currentElementIndex)
             {
                 _saveManager.Data.CurrentStageNumber = _currentElementIndex + 1;
+                _saveManager.Save();
                 _audioManager.PlaySoundEffect(SoundEffect.SelectEnter1);
                 SceneManager.LoadScene(Const.StageTemplateName + (_currentElementIndex + 1).ToString());
             }
@@ -118,7 +103,7 @@ namespace Widget.Select
         /// <summary>
         /// 左に移動
         /// </summary>
-        private void TurnLeft()
+        public void TurnLeft()
         {
             if (_currentElementIndex <= 0)
             {
@@ -143,7 +128,7 @@ namespace Widget.Select
         /// <summary>
         /// 右に移動
         /// </summary>
-        private void TurnRight()
+        public void TurnRight()
         {
             if (_currentElementIndex >= _stageSelectPanelList.Count - 1)
             {

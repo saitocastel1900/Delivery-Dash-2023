@@ -1,10 +1,8 @@
-using Commons.Save;
 using UniRx;
-using Zenject;
 
 namespace Widget.InGame.StageNumber
 {
-    public class StageNumberModel : IStageNumberModel , IInitializable
+    public class StageNumberModel : IStageNumberModel
     {
         /// <summary>
         /// ステージ番号
@@ -13,11 +11,6 @@ namespace Widget.InGame.StageNumber
         private IntReactiveProperty _stageNumberProp;
 
         /// <summary>
-        /// 
-        /// </summary>
-        [Inject] private SaveManager _saveManager;
-        
-        /// <summary>
         /// コンストラクタ
         /// </summary>
         public StageNumberModel()
@@ -25,12 +18,6 @@ namespace Widget.InGame.StageNumber
             _stageNumberProp = new IntReactiveProperty(0);
         }
 
-        public void Initialize()
-        {
-            _saveManager.Load();
-            _stageNumberProp.Value = _saveManager.Data.CurrentStageNumber;
-        }
-        
         /// <summary>
         /// ステージ番号を設定
         /// </summary>

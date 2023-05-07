@@ -18,11 +18,11 @@ namespace Commons.Save
         /// セーブするデータ
         /// </summary>
         public SaveData Data { get; private set; }
-        
+
         /// <summary>
         /// 保存場所
         /// </summary>
-        private string Path => Application.dataPath + "/SaveData.json";
+        private string Path => Application.streamingAssetsPath + "/SaveData.json";
 
         /// <summary>
         /// セーブ
@@ -50,7 +50,7 @@ namespace Commons.Save
                 Save();
                 return;
             }
-
+            
             StreamReader streamReader = new StreamReader(Path);
             string jsonData = streamReader.ReadToEnd();
             Data = JsonUtility.FromJson<SaveData>(jsonData);

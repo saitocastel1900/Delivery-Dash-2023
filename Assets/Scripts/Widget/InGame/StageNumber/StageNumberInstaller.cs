@@ -8,7 +8,7 @@ namespace Widget.InGame.StageNumber
         {
             Container.Bind(typeof(StageNumberPresenter), typeof(IInitializable)).To<StageNumberPresenter>().AsCached()
                 .NonLazy();
-            Container.Bind(typeof(IStageNumberModel),typeof(IInitializable)).To<StageNumberModel>().FromNew().AsCached();
+            Container.Bind<IStageNumberModel>().To<StageNumberModel>().FromNew().AsCached();
         }
     }
 }

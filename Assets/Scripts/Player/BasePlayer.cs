@@ -1,3 +1,4 @@
+using Commons.Input;
 using UnityEngine;
 using Zenject;
 using UniRx;
@@ -16,7 +17,7 @@ namespace Player
         /// <summary>
         /// Input
         /// </summary>
-        [Inject] protected IInputEventProvider _input;
+        [Inject] protected IInGameInputEventProvider _input;
 
         private void Start()
         {
